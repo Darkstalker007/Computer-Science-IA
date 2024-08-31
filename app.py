@@ -11,7 +11,7 @@ app.config['SECRET_KEY'] = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['EMAIL_SENDER'] = 'edunet657@gmail.com'  # Replace with your email
-app.config['EMAIL_PASSWORD'] = '3122003Ma'  # Replace with your email password or app password
+app.config['EMAIL_PASSWORD'] = 'yakb ysyg ogkm aoqz'  # Replace with your email password or app password
 from datetime import datetime
 
 
@@ -151,7 +151,7 @@ def mark_attendance(class_id):
     return render_template('mark_attendance.html', class_obj=class_obj)
 def send_absence_email(student_email, class_name, date):
     sender_email = "edunet657@gmail.com"  # Replace with your email
-    sender_password = "3122003Ma"  # Replace with your email password or app password
+    sender_password = "yakb ysyg ogkm aoqz"  # Replace with your email password or app password
 
     message = MIMEMultipart()
     message['From'] = sender_email
