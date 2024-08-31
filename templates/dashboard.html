@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Dashboard</h1>
+    
+    {% if current_user.role == 'teacher' %}
+        <h2>Your Classes</h2>
+        <ul>
+            {% for class in classes %}
+                <li>
+                    {{ class.name }}
+                    <a href="{{ url_for('mark_attendance', class_id=class.id) }}">Mark Attendance</a>
+                    <form method="POST" action="{{ url_for('add_student', class_id=class.id) }}">
+                        <input type="email" name="student_email" placeholder="Student Email" required>
+                        <button type="submit">Add Student</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+        <a href="{{ url_for('create_class') }}">Create New Class</a>
+    {% else %}
+        <h2>Your Classes</h2>
+        <ul>
+            {% for class in classes %}
+                <li>{{ class.name }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Mark Attendance for {{ class_obj.name }}</h1>
+    <form method="POST">
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" required>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in class_obj.students %}
+                    <tr>
+                        <td>{{ student.email }}</td>
+                        <td>
+                            <select name="status_{{ student.id }}" required>
+                                <option value="present">Present</option>
+                                <option value="absent">Absent</option>
+                            </select>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <button type="submit">Submit Attendance</button>
+    </form>
+{% endblock %}
