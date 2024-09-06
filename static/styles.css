@@ -111,3 +111,20 @@ button:hover {
     flex-grow: 1;
     margin-right: 0.5rem;
 }
+.student-list {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 1rem;
+}
+
+.student-list li {
+    margin-bottom: 0.5rem;
+}
+
+.btn-danger {
+    background-color: #e74c3c;
+}
+
+.btn-danger:hover {
+    background-color: #c0392b;
+}

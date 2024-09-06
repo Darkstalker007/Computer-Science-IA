@@ -180,6 +180,26 @@ def send_absence_email(student_email, class_name, date):
     except Exception as e:
         print(f"Failed to send email to {student_email}. Error: {str(e)}")
 
+
+@app.route('/remove_student/<int:class_id>/<int:student_id>', methods=['POST'])
+@login_required
+def remove_student(class_id, student_id):
+    if current_user.role != 'teacher':
+        flash('Only teachers can remove students')
+        return redirect(url_for('dashboard'))
+    
+    class_obj = Class.query.get(class_id)
+    student = User.query.get(student_id)
+    
+    if class_obj and student and student in class_obj.students:
+        class_obj.students.remove(student)
+        db.session.commit()
+        flash('Student removed from class')
+    else:
+        flash('Student or class not found')
+    
+    return redirect(url_for('dashboard'))
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
