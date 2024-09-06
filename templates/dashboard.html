@@ -5,24 +5,26 @@
     
     {% if current_user.role == 'teacher' %}
         <h2>Your Classes</h2>
-        <ul>
+        <ul class="class-list">
             {% for class in classes %}
-                <li>
-                    {{ class.name }}
-                    <a href="{{ url_for('mark_attendance', class_id=class.id) }}">Mark Attendance</a>
-                    <form method="POST" action="{{ url_for('add_student', class_id=class.id) }}">
+                <li class="class-item">
+                    <h3>{{ class.name }}</h3>
+                    <a href="{{ url_for('mark_attendance', class_id=class.id) }}" class="btn">Mark Attendance</a>
+                    <form method="POST" action="{{ url_for('add_student', class_id=class.id) }}" class="add-student-form">
                         <input type="email" name="student_email" placeholder="Student Email" required>
                         <button type="submit">Add Student</button>
                     </form>
                 </li>
             {% endfor %}
         </ul>
-        <a href="{{ url_for('create_class') }}">Create New Class</a>
+        <a href="{{ url_for('create_class') }}" class="btn create-class">Create New Class</a>
     {% else %}
         <h2>Your Classes</h2>
-        <ul>
+        <ul class="class-list">
             {% for class in classes %}
-                <li>{{ class.name }}</li>
+                <li class="class-item">
+                    <h3>{{ class.name }}</h3>
+                </li>
             {% endfor %}
         </ul>
     {% endif %}
