@@ -75,9 +75,10 @@ def logout():
 def dashboard():
     if current_user.role == 'teacher':
         classes = Class.query.filter_by(teacher_id=current_user.id).all()
+        return render_template('dashboard.html', classes=classes)
     else:
-        classes = current_user.classes
-    return render_template('dashboard.html', classes=classes)
+        return redirect(url_for('student_dashboard'))
+
 
 @app.route('/create_class', methods=['GET', 'POST'])
 @login_required
@@ -95,6 +96,34 @@ def create_class():
         return redirect(url_for('dashboard'))
     
     return render_template('create_class.html')
+
+@app.route('/student_dashboard')
+@login_required
+def student_dashboard():
+    if current_user.role != 'student':
+        flash('Only students can access this dashboard')
+        return redirect(url_for('dashboard'))
+    
+    # Get all classes the student is enrolled in
+    classes = current_user.classes
+    
+    # Get attendance records for the student
+    attendance_records = Attendance.query.filter_by(student_id=current_user.id).all()
+    
+    # Calculate attendance statistics
+    total_classes = len(attendance_records)
+    present_count = sum(1 for record in attendance_records if record.status == 'present')
+    absent_count = total_classes - present_count
+    attendance_rate = (present_count / total_classes) * 100 if total_classes > 0 else 0
+    
+    return render_template('student_dashboard.html', 
+                           classes=classes, 
+                           attendance_records=attendance_records,
+                           total_classes=total_classes,
+                           present_count=present_count,
+                           absent_count=absent_count,
+                           attendance_rate=attendance_rate)
+
 
 @app.route('/add_student/<int:class_id>', methods=['POST'])
 @login_required
@@ -204,3 +233,4 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run(debug=True)
+

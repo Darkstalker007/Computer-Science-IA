@@ -15,6 +15,8 @@ class Class(db.Model):
     name = db.Column(db.String(100), nullable=False)
     teacher_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     students = db.relationship('User', secondary='user_class', back_populates='classes')
+    attendances = db.relationship('Attendance', back_populates='class_')
+
 
 class UserClass(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -27,3 +29,4 @@ class Attendance(db.Model):
     student_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     date = db.Column(db.Date, nullable=False)
     status = db.Column(db.String(20), nullable=False)
+    class_ = db.relationship('Class', back_populates='attendances')
