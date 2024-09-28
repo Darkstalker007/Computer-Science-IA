@@ -80,6 +80,8 @@ def dashboard():
         return redirect(url_for('student_dashboard'))
 
 
+class_stack = []
+
 @app.route('/create_class', methods=['GET', 'POST'])
 @login_required
 def create_class():
@@ -90,7 +92,12 @@ def create_class():
     if request.method == 'POST':
         class_name = request.form['class_name']
         new_class = Class(name=class_name, teacher_id=current_user.id)
-        db.session.add(new_class)
+        class_stack.append(new_class)
+        
+        while class_stack:
+            class_to_save = class_stack.pop()
+            db.session.add(class_to_save)
+        
         db.session.commit()
         flash('Class created successfully')
         return redirect(url_for('dashboard'))
@@ -149,6 +156,10 @@ def add_student(class_id):
     
     return redirect(url_for('dashboard'))
 
+from collections import deque
+
+attendance_queue = deque()
+
 @app.route('/mark_attendance/<int:class_id>', methods=['GET', 'POST'])
 @login_required
 def mark_attendance(class_id):
@@ -165,9 +176,14 @@ def mark_attendance(class_id):
         for student in class_obj.students:
             status = request.form.get(f'status_{student.id}')
             attendance = Attendance(class_id=class_id, student_id=student.id, status=status, attendance_date=date_obj)
-            db.session.add(attendance)
+            attendance_queue.append(attendance)
             if status == 'absent':
                 absent_students.append(student)
+        
+        while attendance_queue:
+            attendance = attendance_queue.popleft()
+            db.session.add(attendance)
+        
         db.session.commit()
         
         # Send emails to absent students
