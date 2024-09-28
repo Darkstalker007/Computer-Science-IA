@@ -164,7 +164,7 @@ def mark_attendance(class_id):
         absent_students = []
         for student in class_obj.students:
             status = request.form.get(f'status_{student.id}')
-            attendance = Attendance(class_id=class_id, student_id=student.id, date=date_obj, status=status)
+            attendance = Attendance(class_id=class_id, student_id=student.id, status=status, attendance_date=date_obj)
             db.session.add(attendance)
             if status == 'absent':
                 absent_students.append(student)
