@@ -19,15 +19,16 @@ class BaseModel(db.Model):
 class User(UserMixin, BaseModel):
     __tablename__ = 'user'
     email = db.Column(db.String(120), unique=True, nullable=False)
+    name = db.Column(db.String(100), nullable=False)
     password = db.Column(db.String(255), nullable=False)
     role = db.Column(db.String(20), nullable=False)
     classes = db.relationship('Class', secondary='user_class', back_populates='students')
 
-    def __init__(self, email, password, role):
+    def __init__(self, name, email, password, role):
+        self.name = name
         self.email = email
         self.password = password
         self.role = role
-
     def is_teacher(self):
         return self.role == 'teacher'
 

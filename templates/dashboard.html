@@ -18,7 +18,7 @@
                     <ul class="student-list">
                         {% for student in class.students %}
                             <li>
-                                {{ student.email }}
+                                {{ student.name }}
                                 <form method="POST" action="{{ url_for('remove_student', class_id=class.id, student_id=student.id) }}" style="display: inline;">
                                     <button type="submit" class="btn btn-danger">Remove</button>
                                 </form>
