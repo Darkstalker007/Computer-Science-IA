@@ -10,6 +10,7 @@
                 <li class="class-item">
                     <h3>{{ class.name }}</h3>
                     <a href="{{ url_for('mark_attendance', class_id=class.id) }}" class="btn">Mark Attendance</a>
+                    <a href="{{ url_for('attendance_history', class_id=class.id) }}" class="btn btn-info">View Attendance History</a>
                     <form method="POST" action="{{ url_for('add_student', class_id=class.id) }}" class="add-student-form">
                         <input type="email" name="student_email" placeholder="Student Email" required>
                         <button type="submit">Add Student</button>

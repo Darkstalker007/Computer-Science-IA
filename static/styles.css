@@ -6,6 +6,19 @@ body {
     background-color: #f4f4f4;
 }
 
+/* Highlight active buttons distinctly */
+.btn.active {
+    background-color: #0056b3; /* Adjust this for a better contrast */
+    color: white;
+    border-color: #0056b3;
+}
+
+/* Ensure padding and alignment remain consistent */
+.btn.active:hover {
+    background-color: #004494; /* Darker shade for hover effect */
+}
+
+
 nav {
     background-color: #3498db;
     padding: 1rem;

@@ -173,15 +173,19 @@ def mark_attendance(class_id):
     
     if request.method == 'POST':
         date_str = request.form['date']
-        date_obj = datetime.strptime(date_str, '%Y-%m-%d').date()  # Convert string to date object
+        date_obj = datetime.strptime(date_str, '%Y-%m-%d')  # Convert string to datetime object
         absent_students = []
         for student in class_obj.students:
             status = request.form.get(f'status_{student.id}')
-            attendance = Attendance(class_id=class_id, student_id=student.id, status=status, attendance_date=date_obj)
+            attendance = Attendance(
+                class_id=class_id,
+                student_id=student.id,
+                status=status,
+                attendance_date=date_obj  # Make sure this matches the model field
+            )
             attendance_queue.append(attendance)
             if status == 'absent':
-                absent_students.append(student)
-        
+                absent_students.append(student)        
         while attendance_queue:
             attendance = attendance_queue.popleft()
             db.session.add(attendance)
@@ -246,6 +250,60 @@ def remove_student(class_id, student_id):
         flash('Student or class not found')
     
     return redirect(url_for('dashboard'))
+
+
+
+@app.route('/attendance_history/<int:class_id>')
+@login_required
+def attendance_history(class_id):
+    if current_user.role != 'teacher':
+        flash('Only teachers can view attendance history')
+        return redirect(url_for('dashboard'))
+    
+    class_obj = Class.query.get(class_id)
+    sort_by = request.args.get('sort_by', 'date')  # Default sort by date
+    
+    # Get all attendance records for the class
+    attendance_records = Attendance.query.filter_by(class_id=class_id).all()
+    
+    # Create a dictionary to store student attendance statistics
+    student_stats = {}
+    for student in class_obj.students:
+        student_records = [r for r in attendance_records if r.student_id == student.id]
+        absent_count = sum(1 for r in student_records if r.status == 'absent')
+        present_count = sum(1 for r in student_records if r.status == 'present')
+        attendance_rate = (present_count / len(student_records) * 100) if student_records else 0
+        
+        student_stats[student.id] = {
+            'name': student.name,
+            'absent_count': absent_count,
+            'present_count': present_count,
+            'attendance_rate': attendance_rate,
+            'records': student_records
+        }
+    
+    # Sort the statistics based on selected criteria
+    if sort_by == 'absent':
+        sorted_stats = dict(sorted(student_stats.items(), 
+                                 key=lambda x: x[1]['absent_count'], 
+                                 reverse=True))
+    elif sort_by == 'present':
+        sorted_stats = dict(sorted(student_stats.items(), 
+                                 key=lambda x: x[1]['present_count'], 
+                                 reverse=True))
+    elif sort_by == 'rate':
+        sorted_stats = dict(sorted(student_stats.items(), 
+                                 key=lambda x: x[1]['attendance_rate'], 
+                                 reverse=True))
+    else:  # sort by name
+        sorted_stats = dict(sorted(student_stats.items(), 
+                                 key=lambda x: x[1]['name']))
+    
+    return render_template('attendance_history.html', 
+                         class_obj=class_obj,
+                         student_stats=sorted_stats,
+                         sort_by=sort_by)
+
 
 if __name__ == '__main__':
     with app.app_context():

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Attendance History for {{ class_obj.name }}</h2>
+
+<div class="sorting-options">
+    <h3>Sort by:</h3>
+    <a href="{{ url_for('attendance_history', class_id=class_obj.id, sort_by='name') }}" 
+       class="btn btn-primary {% if sort_by == 'name' %}active{% endif %}">Name</a>
+       <a href="{{ url_for('attendance_history', class_id=class_obj.id, sort_by='absent') }}" 
+       class="btn {% if sort_by == 'absent' %}active{% else %}btn-primary{% endif %}">Most Absences</a>    
+    <a href="{{ url_for('attendance_history', class_id=class_obj.id, sort_by='present') }}" 
+       class="btn btn-success {% if sort_by == 'present' %}active{% endif %}">Most Present</a>
+    <a href="{{ url_for('attendance_history', class_id=class_obj.id, sort_by='rate') }}" 
+       class="btn btn-info {% if sort_by == 'rate' %}active{% endif %}">Attendance Rate</a>
+</div>
+
+<div class="attendance-stats">
+    {% for student_id, stats in student_stats.items() %}
+    <div class="student-card">
+        <h4>{{ stats.name }}</h4>
+        <p>Present: {{ stats.present_count }}</p>
+        <p>Absent: {{ stats.absent_count }}</p>
+        <p>Attendance Rate: {{ "%.2f"|format(stats.attendance_rate) }}%</p>
+        
+        <div class="attendance-details">
+            <h5>Attendance Records:</h5>
+            <ul>
+                {% for record in stats.records %}
+                <li>
+                    {{ record.date.strftime('%Y-%m-%d') }} - 
+                    <span class="{{ 'text-success' if record.status == 'present' else 'text-danger' }}">
+                        {{ record.status }}
+                    </span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
