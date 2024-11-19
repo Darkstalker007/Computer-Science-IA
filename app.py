@@ -6,6 +6,10 @@ from models import db, User, Class, Attendance
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from exports import generate_student_attendance_pdf
+from flask import send_file
+
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
@@ -133,6 +137,26 @@ def student_dashboard():
                            absent_count=absent_count,
                            attendance_rate=attendance_rate)
 
+@app.route('/export/student_attendance/<int:student_id>')
+@login_required
+def export_student_attendance(student_id):
+    if current_user.role != 'student' and current_user.id != student_id:
+        flash('You can only export your own attendance records')
+        return redirect(url_for('student_dashboard'))
+    
+    attendance_records = Attendance.query.filter_by(student_id=student_id).all()
+    pdf_file = generate_student_attendance_pdf(
+        current_user.name, 
+        student_id, 
+        attendance_records
+    )
+    
+    return send_file(
+        pdf_file,
+        mimetype='application/pdf',
+        as_attachment=True,
+        download_name=f'attendance_{current_user.name}.pdf'
+    )
 
 @app.route('/add_student/<int:class_id>', methods=['POST'])
 @login_required

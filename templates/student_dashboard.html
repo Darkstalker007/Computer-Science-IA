@@ -16,6 +16,12 @@
     <p>Attendance Rate: {{ "%.2f"|format(attendance_rate) }}%</p>
 
     <h2>Attendance Records</h2>
+    <div class="export-section">
+        <a href="{{ url_for('export_student_attendance', student_id=current_user.id) }}" 
+           class="btn btn-primary">
+            Export Attendance History
+        </a>
+    </div>
     <table>
         <thead>
             <tr>
