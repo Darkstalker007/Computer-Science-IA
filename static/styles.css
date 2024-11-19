@@ -141,3 +141,19 @@ button:hover {
 .btn-danger:hover {
     background-color: #c0392b;
 }
+
+.school-logo {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.school-logo img {
+    max-width: 200px;
+    height: auto;
+}
+
+.login-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+}
