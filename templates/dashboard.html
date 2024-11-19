@@ -1,35 +1,44 @@
 {% extends "base.html" %}
-<!--dashboard.html-->
 {% block content %}
     <h1>Dashboard</h1>
     
     {% if current_user.role == 'teacher' %}
         <h2>Your Classes</h2>
-        <ul class="class-list">
-            {% for class in classes %}
-                <li class="class-item">
-                    <h3>{{ class.name }}</h3>
-                    <a href="{{ url_for('mark_attendance', class_id=class.id) }}" class="btn">Mark Attendance</a>
-                    <a href="{{ url_for('attendance_history', class_id=class.id) }}" class="btn btn-info">View Attendance History</a>
-                    <a href="{{ url_for('export_class_attendance', class_id=class.id) }}" class="btn btn-primary">Export Class Attendance</a>
-                    <form method="POST" action="{{ url_for('add_student', class_id=class.id) }}" class="add-student-form">
-                        <input type="email" name="student_email" placeholder="Student Email" required>
-                        <button type="submit">Add Student</button>
-                    </form>
-                    <h4>Students:</h4>
-                    <ul class="student-list">
-                        {% for student in class.students %}
-                            <li>
-                                {{ student.name }}
-                                <form method="POST" action="{{ url_for('remove_student', class_id=class.id, student_id=student.id) }}" style="display: inline;">
-                                    <button type="submit" class="btn btn-danger">Remove</button>
-                                </form>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </li>
-            {% endfor %}
-        </ul>
+        <div class="class-selector">
+            <select id="classSelect" onchange="showClassDetails(this.value)">
+                <option value="">Select a class</option>
+                {% for class in classes %}
+                    <option value="{{ class.id }}">{{ class.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        {% for class in classes %}
+            <div id="class-{{ class.id }}" class="class-details" style="display: none;">
+                <h3>{{ class.name }}</h3>
+                <a href="{{ url_for('mark_attendance', class_id=class.id) }}" class="btn">Mark Attendance</a>
+                <a href="{{ url_for('attendance_history', class_id=class.id) }}" class="btn btn-info">View Attendance History</a>
+                <a href="{{ url_for('export_class_attendance', class_id=class.id) }}" class="btn btn-primary">Export Class Attendance</a>
+                
+                <form method="POST" action="{{ url_for('add_student', class_id=class.id) }}" class="add-student-form">
+                    <input type="email" name="student_email" placeholder="Student Email" required>
+                    <button type="submit">Add Student</button>
+                </form>
+                
+                <h4>Students:</h4>
+                <ul class="student-list">
+                    {% for student in class.students %}
+                        <li>
+                            {{ student.name }}
+                            <form method="POST" action="{{ url_for('remove_student', class_id=class.id, student_id=student.id) }}" style="display: inline;">
+                                <button type="submit" class="btn btn-danger">Remove</button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+        
         <a href="{{ url_for('create_class') }}" class="btn create-class">Create New Class</a>
     {% else %}        <h2>Your Classes</h2>
         <ul class="class-list">
@@ -40,4 +49,18 @@
             {% endfor %}
         </ul>
     {% endif %}
+
+    <script>
+        function showClassDetails(classId) {
+            // Hide all class details
+            document.querySelectorAll('.class-details').forEach(div => {
+                div.style.display = 'none';
+            });
+            
+            // Show selected class details
+            if (classId) {
+                document.getElementById('class-' + classId).style.display = 'block';
+            }
+        }
+    </script>
 {% endblock %}

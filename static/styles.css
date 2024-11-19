@@ -157,3 +157,21 @@ button:hover {
     margin: 0 auto;
     padding: 20px;
 }
+
+.class-selector {
+    margin: 20px 0;
+}
+
+.class-selector select {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 4px;
+    width: 200px;
+}
+
+.class-details {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
