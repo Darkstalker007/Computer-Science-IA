@@ -226,8 +226,8 @@ def mark_attendance(class_id):
     
     return render_template('mark_attendance.html', class_obj=class_obj)
 def send_absence_email(student_email, class_name, date):
-    sender_email = "edunet657@gmail.com"  # Replace with your email
-    sender_password = "yakb ysyg ogkm aoqz"  # Replace with your email password or app password
+    sender_email = "edunet657@gmail.com"  
+    sender_password = "yakb ysyg ogkm aoqz"  
 
     message = MIMEMultipart()
     message['From'] = sender_email
