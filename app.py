@@ -6,8 +6,9 @@ from models import db, User, Class, Attendance
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from exports import generate_student_attendance_pdf
 from flask import send_file
+from exports import generate_class_attendance_pdf, generate_student_attendance_pdf
+
 
 
 
@@ -327,6 +328,29 @@ def attendance_history(class_id):
                          class_obj=class_obj,
                          student_stats=sorted_stats,
                          sort_by=sort_by)
+
+@app.route('/export/class_attendance/<int:class_id>')
+@login_required
+def export_class_attendance(class_id):
+    if current_user.role != 'teacher':
+        flash('Only teachers can export class attendance')
+        return redirect(url_for('dashboard'))
+    
+    class_obj = Class.query.get_or_404(class_id)
+    attendance_records = Attendance.query.filter_by(class_id=class_id).all()
+    
+    pdf_file = generate_class_attendance_pdf(
+        class_obj.name,
+        class_id,
+        attendance_records
+    )
+    
+    return send_file(
+        pdf_file,
+        mimetype='application/pdf',
+        as_attachment=True,
+        download_name=f'class_attendance_{class_obj.name}.pdf'
+    )
 
 
 if __name__ == '__main__':

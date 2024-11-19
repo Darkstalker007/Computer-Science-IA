@@ -11,6 +11,7 @@
                     <h3>{{ class.name }}</h3>
                     <a href="{{ url_for('mark_attendance', class_id=class.id) }}" class="btn">Mark Attendance</a>
                     <a href="{{ url_for('attendance_history', class_id=class.id) }}" class="btn btn-info">View Attendance History</a>
+                    <a href="{{ url_for('export_class_attendance', class_id=class.id) }}" class="btn btn-primary">Export Class Attendance</a>
                     <form method="POST" action="{{ url_for('add_student', class_id=class.id) }}" class="add-student-form">
                         <input type="email" name="student_email" placeholder="Student Email" required>
                         <button type="submit">Add Student</button>
@@ -30,8 +31,7 @@
             {% endfor %}
         </ul>
         <a href="{{ url_for('create_class') }}" class="btn create-class">Create New Class</a>
-    {% else %}
-        <h2>Your Classes</h2>
+    {% else %}        <h2>Your Classes</h2>
         <ul class="class-list">
             {% for class in classes %}
                 <li class="class-item">
